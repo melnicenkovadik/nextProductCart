@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button'
 import firebase from "firebase";
 import {useEffect, useState} from "react";
 
-export default () => {
+export default function Home() {
     const {user, logout} = useUser()
     const [products, setProducts] = useState([]);
     const [category, setCategory] = useState(null);
@@ -69,35 +69,41 @@ export default () => {
         return (
             <div className={styles.container}>
 
-                <div style={{display: 'flex', justifyContent: 'space-around'}}>
-                    <Button onClick={() => logout()} style={{width: '100px'}}>Log Out</Button>
-                </div>
-
                 <main className={styles.main}>
-                    <h1 className={styles.title}>
+                    <h2 className={styles.title}>
                         {user.name}, Welcome to Test Shop
-                    </h1>
+                    </h2>
+                    <div style={{display: 'flex', justifyContent: 'space-around'}}>
+                        <Button onClick={() => logout()} style={{width: '100px'}}>Log Out</Button>
+                    </div>
                     {/*Search*/}
-                    <label htmlFor={'catSelect'}><h2>Select a category:</h2></label>
-                    <input type="text" value={search}
-                           onChange={(e) => searchInputHandler(e.target.value)}/>
-                    {/*Select*/}
-                    <label htmlFor={'catSelect'}><h2>Select a category:</h2></label>
-                    <select
+                    <label htmlFor={'catSelect'}><h2>Start to input</h2></label>
+                    <input
+                        type="text"
+                        value={search}
                         style={{width: '100%', border1: '1px solid black', borderRadius: 10, height: 40}}
+                        onChange={(e) => searchInputHandler(e.target.value)}/>
+                    {/*Select*/}
+                    <label
+                        htmlFor={'catSelect'}><h2>Select a category:</h2></label>
+                    <select
+                        style={{width: '20%', border1: '1px solid black', borderRadius: 10, height: 40}}
                         name={'catSelect'}
                         onChange={e => setCategory(e.target.value)}>
                         <option value={null}/>
                         {
                             products && categories && categories.map(cat => (
                                 // SelectItem
-                                <option value={cat.name} key={cat.name}> {cat.name}</option>
+                                <option
+                                    value={cat.name}
+                                    key={cat.name}> {cat.name}</option>
                             ))
                         }
                     </select>
 
                     {/*Products*/}
-                    <div className={styles.grid}>
+                    <div
+                        className={styles.grid}>
                         {
                             products && products?.filter(product => category === product.prod_categories && product.prod_name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
                                 .map((filteredProduct, i) => {
@@ -139,14 +145,18 @@ export default () => {
                     </div>
                 </main>
 
-                <footer className={styles.footer}>
+                <footer
+                    className={styles.footer}>
                     <a
                         href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
                         Powered by{' '}
-                        <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo}/>
+                        <img
+                            src="/vercel.svg"
+                            alt="Vercel Logo"
+                            className={styles.logo}/>
                     </a>
                 </footer>
             </div>

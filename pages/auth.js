@@ -1,7 +1,7 @@
 import FirebaseAuth from '../components/auth/FirebaseAuth'
 import styles from "../styles/Home.module.css";
 
-export default () => {
+export default function Auth() {
     return (
         <div>
             <div>
