@@ -18,17 +18,15 @@ export default function Home() {
         setSearch(value)
     }
     useEffect(() => {
-        firebase
-            .firestore()
-            .collection('categories')
-            .get()
-            .then(data => data.forEach(doc => {
-                setCategories(prevState => [...prevState, doc.data()]);
-            }))
-
-    }, [])
-    useEffect(() => {
         try {
+            firebase
+                .firestore()
+                .collection('categories')
+                .get()
+                .then(data => data.forEach(doc => {
+                    setCategories(prevState => [...prevState, doc.data()]);
+                }))
+
             firebase
                 .firestore()
                 .collection('products')
@@ -40,11 +38,8 @@ export default function Home() {
             console.log(error)
             alert(error)
         }
-    }, [])
-    useEffect(() => {
-        console.log(search);
-    }, [search]);
 
+    }, [])
 
     if (user && user.email === 'admin@gmail.com') {
         return (
@@ -113,7 +108,6 @@ export default function Home() {
                                                 <div
                                                     style={{minWidth: 300}}
                                                     key={i}
-                                                    href={filteredProduct.prod_name}
                                                     className={styles.card}
                                                 >
                                                     {filteredProduct.prod_name && <h3>{filteredProduct.prod_name}</h3>}
@@ -130,7 +124,6 @@ export default function Home() {
                                             <a
                                                 style={{width: '100%'}}
                                                 key={product.prod_name}
-                                                href={product.prod_name}
                                                 className={styles.card}
                                             >
                                                 {product.prod_name && <h3>{product.prod_name}</h3>}
@@ -180,7 +173,6 @@ export default function Home() {
                                         <a
                                             style={{width: '100%'}}
                                             key={product.prod_name}
-                                            href={product.prod_name}
                                             className={styles.card}
                                         >
                                             {product.prod_name && <h3>{product.prod_name}</h3>}
