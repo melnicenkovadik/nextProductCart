@@ -5,6 +5,7 @@ import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import firebase from "firebase";
 import {useEffect, useState} from "react";
+import Loader from "../components/Loader";
 
 export default function Home() {
     const {user, logout} = useUser()
@@ -68,82 +69,86 @@ export default function Home() {
     } else if (user) {
         return (
             <div className={styles.container}>
+                {
+                    products
+                        ? (<main className={styles.main}>
+                            <h2 className={styles.title}>
+                                {user.name}, Welcome to Test Shop
+                            </h2>
+                            <div style={{display: 'flex', justifyContent: 'space-around'}}>
+                                <Button onClick={() => logout()} style={{width: '100px'}}>Log Out</Button>
+                            </div>
+                            {/*Search*/}
+                            <label htmlFor={'catSelect'}><h2>Start to input</h2></label>
+                            <input
+                                type="text"
+                                value={search}
+                                style={{width: '100%', border1: '1px solid black', borderRadius: 10, height: 40}}
+                                onChange={(e) => searchInputHandler(e.target.value)}/>
+                            {/*Select*/}
+                            <label
+                                htmlFor={'catSelect'}><h2>Select a category:</h2></label>
+                            <select
+                                style={{width: '20%', border1: '1px solid black', borderRadius: 10, height: 40}}
+                                name={'catSelect'}
+                                onChange={e => setCategory(e.target.value)}>
+                                <option value={null}/>
+                                {
+                                    products && categories && categories.map(cat => (
+                                        // SelectItem
+                                        <option
+                                            value={cat.name}
+                                            key={cat.name}> {cat.name}</option>
+                                    ))
+                                }
+                            </select>
 
-                <main className={styles.main}>
-                    <h2 className={styles.title}>
-                        {user.name}, Welcome to Test Shop
-                    </h2>
-                    <div style={{display: 'flex', justifyContent: 'space-around'}}>
-                        <Button onClick={() => logout()} style={{width: '100px'}}>Log Out</Button>
-                    </div>
-                    {/*Search*/}
-                    <label htmlFor={'catSelect'}><h2>Start to input</h2></label>
-                    <input
-                        type="text"
-                        value={search}
-                        style={{width: '100%', border1: '1px solid black', borderRadius: 10, height: 40}}
-                        onChange={(e) => searchInputHandler(e.target.value)}/>
-                    {/*Select*/}
-                    <label
-                        htmlFor={'catSelect'}><h2>Select a category:</h2></label>
-                    <select
-                        style={{width: '20%', border1: '1px solid black', borderRadius: 10, height: 40}}
-                        name={'catSelect'}
-                        onChange={e => setCategory(e.target.value)}>
-                        <option value={null}/>
-                        {
-                            products && categories && categories.map(cat => (
-                                // SelectItem
-                                <option
-                                    value={cat.name}
-                                    key={cat.name}> {cat.name}</option>
-                            ))
-                        }
-                    </select>
+                            {/*Products*/}
+                            <div
+                                className={styles.grid}>
+                                {
+                                    products && products?.filter(product => category === product.prod_categories && product.prod_name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+                                        .map((filteredProduct, i) => {
+                                            return (
+                                                <div
+                                                    style={{minWidth: 300}}
+                                                    key={i}
+                                                    href={filteredProduct.prod_name}
+                                                    className={styles.card}
+                                                >
+                                                    {filteredProduct.prod_name && <h3>{filteredProduct.prod_name}</h3>}
+                                                    {filteredProduct.prod_price && <h5>{filteredProduct.prod_price}</h5>}
+                                                    {filteredProduct.prod_categories &&
+                                                    <p>{filteredProduct.prod_categories}</p>}
+                                                </div>
+                                            )
+                                        })
+                                }
+                                {category === null && (
+                                    products?.filter(product => product.prod_name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+                                        .map(product => (
+                                            <a
+                                                style={{width: '100%'}}
+                                                key={product.prod_name}
+                                                href={product.prod_name}
+                                                className={styles.card}
+                                            >
+                                                {product.prod_name && <h3>{product.prod_name}</h3>}
+                                                {product.prod_price && <h5>{product.prod_price}</h5>}
+                                                {product.prod_categories && <p>{product.prod_categories}</p>}
+                                            </a>
+                                        ))
+                                )}
 
-                    {/*Products*/}
-                    <div
-                        className={styles.grid}>
-                        {
-                            products && products?.filter(product => category === product.prod_categories && product.prod_name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-                                .map((filteredProduct, i) => {
-                                    return (
-                                        <div
-                                            style={{minWidth: 300}}
-                                            key={i}
-                                            href={filteredProduct.prod_name}
-                                            className={styles.card}
-                                        >
-                                            {filteredProduct.prod_name && <h3>{filteredProduct.prod_name}</h3>}
-                                            {filteredProduct.prod_price && <h5>{filteredProduct.prod_price}</h5>}
-                                            {filteredProduct.prod_categories &&
-                                            <p>{filteredProduct.prod_categories}</p>}
-                                        </div>
-                                    )
-                                })
-                        }
-                        {category === null && (
-                            products?.filter(product => product.prod_name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
-                                .map(product => (
-                                    <a
-                                        style={{width: '100%'}}
-                                        key={product.prod_name}
-                                        href={product.prod_name}
-                                        className={styles.card}
-                                    >
-                                        {product.prod_name && <h3>{product.prod_name}</h3>}
-                                        {product.prod_price && <h5>{product.prod_price}</h5>}
-                                        {product.prod_categories && <p>{product.prod_categories}</p>}
-                                    </a>
-                                ))
-                        )}
+                                {
+                                    !products && <div>No data, please auth</div>
+                                }
 
-                        {
-                            !products && <div>No data, please auth</div>
-                        }
+                            </div>
+                        </main>)
+                        : <Loader/>
+                }
 
-                    </div>
-                </main>
 
                 <footer
                     className={styles.footer}>
@@ -166,28 +171,32 @@ export default function Home() {
             <div className={styles.container}>
 
                 <div className={styles.logo}><a style={{color: "white"}} href="/auth">Log In!</a></div>
-                <main>
-                    <div className={styles.grid}>
-                        {
-                            products && products?.map(product => (
-                                <a
-                                    style={{width: '100%'}}
-                                    key={product.prod_name}
-                                    href={product.prod_name}
-                                    className={styles.card}
-                                >
-                                    {product.prod_name && <h3>{product.prod_name}</h3>}
-                                    {product.prod_price && <h5>{product.prod_price}</h5>}
-                                    {product.prod_categories && <p>{product.prod_categories}</p>}
-                                </a>
-                            ))
-                        }
-                        {
-                            !products && <div>No data, please auth</div>
-                        }
+                {
+                    products ?
+                        (<main>
+                            <div className={styles.grid}>
+                                {
+                                    products && products?.map(product => (
+                                        <a
+                                            style={{width: '100%'}}
+                                            key={product.prod_name}
+                                            href={product.prod_name}
+                                            className={styles.card}
+                                        >
+                                            {product.prod_name && <h3>{product.prod_name}</h3>}
+                                            {product.prod_price && <h5>{product.prod_price}</h5>}
+                                            {product.prod_categories && <p>{product.prod_categories}</p>}
+                                        </a>
+                                    ))
+                                }
+                                {
+                                    !products && <div>No data, please auth</div>
+                                }
 
-                    </div>
-                </main>
+                            </div>
+                        </main>)
+                        : <Loader/>
+                }
             </div>
         )
     }
